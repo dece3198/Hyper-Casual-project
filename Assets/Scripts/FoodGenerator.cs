@@ -14,23 +14,42 @@ public class FoodGenerator : MonoBehaviour
 
     private void Start()
     {
-        for(int i = 0; i < 10; i++)
+        for (int i = 0; i < 10; i++)
         {
             GameObject burger = Instantiate(burgerPrefab, transform);
             burger.SetActive(false);
             burgerQueue.Enqueue(burger);
         }
+
+        StartCoroutine(BurgerCo());
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if(other.GetComponent<PlayerController>() != null)
+
+        if (other.GetComponent<PlayerController>() != null)
         {
             if(burgerStack.Count > 0)
             {
-                ExitPool(other);
+                if(other.GetComponent<PlayerController>().burgerStack.Count < other.GetComponent<PlayerController>().FoodPos.Length)
+                {
+                    StartCoroutine(ExitPool(other));
+                }
+                else
+                {
+                    UiManager.instance.maxText.gameObject.SetActive(true);
+                }
             }
-                other.GetComponent<PlayerController>().animator.SetBool("Hold", true);
+            other.GetComponent<PlayerController>().animator.SetBool("Hold", true);
+        }
+    }
+
+
+    private void Update()
+    {
+        if (burgerQueue.Count < 1)
+        {
+            Refill(5);
         }
     }
 
@@ -43,12 +62,23 @@ public class FoodGenerator : MonoBehaviour
         posCount++;
     }
 
-    private void ExitPool(Collider player)
+    private IEnumerator ExitPool(Collider player)
     {
-        for(int i = 0; i < burgerStack.Count; i++)
+        float time = 0.5f;
+        posCount--;
+        GameObject burger = burgerStack.Pop();
+        player.GetComponent<PlayerController>().EnterFoodPool(burger);
+        burger.GetComponent<Rigidbody>().AddForce(Vector3.up * 10, ForceMode.Impulse);
+        while (time > 0)
         {
-
+            time -= Time.deltaTime;
+            burger.transform.position = Vector3.Lerp(burger.transform.position, player.GetComponent<PlayerController>().FoodPos[player.GetComponent<PlayerController>().burgerCount].position, 0.01f);
+            yield return null;
         }
+        burger.transform.parent = player.GetComponent<PlayerController>().FoodPos[player.GetComponent<PlayerController>().burgerCount];
+        burger.transform.position = player.GetComponent<PlayerController>().FoodPos[player.GetComponent<PlayerController>().burgerCount].position;
+        player.GetComponent<PlayerController>().burgerCount++;
+        burger.GetComponent<Rigidbody>().isKinematic = true;
     }
 
     public void EnterPool(GameObject _burger)
@@ -56,12 +86,28 @@ public class FoodGenerator : MonoBehaviour
 
     }
 
+    private void Refill(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            GameObject burger = Instantiate(burgerPrefab, transform);
+            burger.SetActive(false);
+            burgerQueue.Enqueue(burger);
+        }
+    }
+
     private IEnumerator BurgerCo()
     {
-        while(true)
+        if(burgerStack.Count < burgerPos.Length)
         {
-            yield return new WaitForSeconds(5f);
-            Generator();
+            while (true)
+            {
+                yield return new WaitForSeconds(1f);
+                if(posCount < burgerPos.Length)
+                {
+                    Generator();
+                }
+            }
         }
     }
 }
