@@ -26,14 +26,14 @@ public class FoodGenerator : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-
         if (other.GetComponent<PlayerController>() != null)
         {
             if(foodStack.Count > 0)
             {
+                other.GetComponent<PlayerController>().animator.SetBool("Hold", true);
                 if (transform.CompareTag("Burger"))
                 {
-                    if (other.GetComponent<PlayerController>().FizzCupStack.Count > 0)
+                    if (other.GetComponent<PlayerController>().fizzCupStack.Count > 0)
                     {
                         if (other.GetComponent<PlayerController>().burgerStack.Count < other.GetComponent<PlayerController>().FoodPos2.Length)
                         {
@@ -65,7 +65,7 @@ public class FoodGenerator : MonoBehaviour
                 {
                     if (other.GetComponent<PlayerController>().burgerStack.Count > 0)
                     {
-                        if (other.GetComponent<PlayerController>().FizzCupStack.Count < other.GetComponent<PlayerController>().FoodPos3.Length)
+                        if (other.GetComponent<PlayerController>().fizzCupStack.Count < other.GetComponent<PlayerController>().FoodPos3.Length)
                         {
                             for(int i = 0; i < other.GetComponent<PlayerController>().FoodPos.Length; i++)
                             {
@@ -80,7 +80,7 @@ public class FoodGenerator : MonoBehaviour
                     }
                     else
                     {
-                        if (other.GetComponent<PlayerController>().FizzCupStack.Count < other.GetComponent<PlayerController>().FoodPos.Length)
+                        if (other.GetComponent<PlayerController>().fizzCupStack.Count < other.GetComponent<PlayerController>().FoodPos.Length)
                         {
                             StartCoroutine(FizzCupExitPool(other.GetComponent<PlayerController>(), other.GetComponent<PlayerController>().FoodPos[other.GetComponent<PlayerController>().fizzCount]));
                         }
@@ -90,8 +90,8 @@ public class FoodGenerator : MonoBehaviour
                         other.GetComponent<PlayerController>().fizzCount++;
                     }
                 }
+                
             }
-            other.GetComponent<PlayerController>().animator.SetBool("Hold", true);
         }
     }
 
@@ -123,7 +123,7 @@ public class FoodGenerator : MonoBehaviour
         while (time > 0)
         {
             time -= Time.deltaTime;
-            food.transform.position = Vector3.Lerp(food.transform.position, foodPos.position, 0.01f);
+            food.transform.position = Vector3.Lerp(food.transform.position, foodPos.position, 0.001f);
             yield return null;
         }
         food.transform.parent = foodPos;
@@ -136,12 +136,12 @@ public class FoodGenerator : MonoBehaviour
         float time = 0.5f;
         posCount--;
         GameObject food = foodStack.Pop();
-        player.FizzCupStack.Push(food);
+        player.fizzCupStack.Push(food);
         food.GetComponent<Rigidbody>().AddForce(Vector3.up * 10, ForceMode.Impulse);
         while (time > 0)
         {
             time -= Time.deltaTime;
-            food.transform.position = Vector3.Lerp(food.transform.position, foodPos.position, 0.01f);
+            food.transform.position = Vector3.Lerp(food.transform.position, foodPos.position, 0.001f);
             yield return null;
         }
         food.transform.parent = foodPos;
@@ -171,7 +171,7 @@ public class FoodGenerator : MonoBehaviour
         {
             while (true)
             {
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(4f);
                 if(posCount < foodPos.Length)
                 {
                     Generator();

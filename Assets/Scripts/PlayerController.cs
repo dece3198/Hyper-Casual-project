@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     public Transform[] FoodPos2;
     public Transform[] FoodPos3;
     public Stack<GameObject> burgerStack = new Stack<GameObject>();
-    public Stack<GameObject> FizzCupStack = new Stack<GameObject>();
+    public Stack<GameObject> fizzCupStack = new Stack<GameObject>();
     [SerializeField] private GameObject tray;
     public int burgerCount = 0;
     public int fizzCount = 0;
@@ -17,12 +17,16 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        //Time.timeScale = 2;
+        Time.timeScale = 2;
     }
 
     private void Update()
     {
-        if(burgerStack.Count <= 0)
+        if(burgerStack.Count > 0 || fizzCupStack.Count > 0)
+        {
+            animator.SetBool("Hold", true);
+        }
+        else
         {
             animator.SetBool("Hold", false);
         }
