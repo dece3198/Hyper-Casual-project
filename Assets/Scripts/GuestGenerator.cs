@@ -8,6 +8,7 @@ public class GuestGenerator : MonoBehaviour
     [SerializeField] private GameObject destination;
     private Queue<GameObject> guestQueue = new Queue<GameObject>();
 
+
     private void Start()
     {
         for(int i = 0; i < 10; i++)
@@ -31,10 +32,28 @@ public class GuestGenerator : MonoBehaviour
         guest.GetComponent<GuestController>().ChangeState(GuestState.Walk);
     }
 
+    private void Refill(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            int rand = Random.Range(0, guests.Count);
+            GameObject guest = Instantiate(guests[rand]);
+            guest.transform.parent = transform;
+            guest.transform.position = transform.position;
+            guest.SetActive(false);
+            guestQueue.Enqueue(guest);
+        }
+    }
+
     private IEnumerator GuestCo()
     {
-        while(true) 
+        while(WaitingManager.instance.waitingCount < WaitingManager.instance.waitingPos.Length) 
         {
+            if(guestQueue.Count <= 1)
+            {
+                Refill(5);
+            }
+
             ExitPool();
             yield return new WaitForSeconds(20f);
         }

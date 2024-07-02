@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class WaitingManager : MonoBehaviour
 {
-    [SerializeField] private Waiting[] waitingPos;
+    public static WaitingManager instance;
+    public Waiting[] waitingPos;
+    public int waitingCount = 0;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     private void Update()
     {
@@ -14,11 +21,9 @@ public class WaitingManager : MonoBehaviour
             {
                 if (waitingPos[i].guest != null)
                 {
-                    if (waitingPos[i].guest.guestState == GuestState.Idle)
-                    {
-                        waitingPos[i].isGuest = true;
-                        waitingPos[i].guest.agent.SetDestination(waitingPos[i - 1].transform.position);
-                    }
+                    waitingPos[i - 1].guest = waitingPos[i].guest;
+                    waitingPos[i].guest.agent.SetDestination(waitingPos[i - 1].transform.position);
+                    waitingPos[i].guest = null;
                 }
             }
         }
@@ -33,12 +38,12 @@ public class WaitingManager : MonoBehaviour
             {
                 if (waitingPos[i].guest == null)
                 {
-                    waitingPos[i].isGuest = true;
+                    waitingCount++;
+                    waitingPos[i].guest = other.GetComponent<GuestController>();
                     other.GetComponent<GuestController>().agent.SetDestination(waitingPos[i].transform.position);
                     return;
                 }
             }
         }
     }
-
 }

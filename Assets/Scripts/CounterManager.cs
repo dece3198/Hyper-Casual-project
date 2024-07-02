@@ -47,33 +47,6 @@ public class CounterManager : MonoBehaviour
         {
             if (waiting.guest.guestState == GuestState.Order)
             {
-                if(fizzCupStack.Count > 0)
-                {
-                    if (foodPos2[0].childCount <= 0)
-                    {
-                        for (int i = 0; i < fizzCupStack.Count; i++)
-                        {
-                            GameObject fizzCup = fizzCupStack.Pop();
-                            fizzCup.transform.position = foodPos2[i].position;
-                            fizzCupStack.Push(fizzCup);
-                        }
-                        fizzCupCount = fizzCupStack.Count;
-                    }
-                }
-                else if(burgerStack.Count > 0)
-                {
-                    if (foodPos[0].childCount <= 0)
-                    {
-                        for(int i = 0; i < burgerStack.Count; i++)
-                        {
-                            GameObject burger = burgerStack.Pop();
-                            burger.transform.position = foodPos[i].position;
-                            burgerStack.Push(burger);
-                        }
-                        burgerCount = burgerStack.Count;
-                    }
-                }
-
                 if (isFizzCup)
                 {
                     if(fizzCupStack.Count > 0)
@@ -93,7 +66,7 @@ public class CounterManager : MonoBehaviour
         isFizzCup = false;
         while (waiting.guest.fizzCupRand > 0)
         {
-            yield return new WaitForSeconds(10f);
+            yield return new WaitForSeconds(6f);
             if(fizzCupStack.Count > 0)
             {
                 float time = 0.5f;
@@ -123,7 +96,7 @@ public class CounterManager : MonoBehaviour
         isBurger = false;
         while (waiting.guest.burgerRand > 0)
         {
-            yield return new WaitForSeconds(10f);
+            yield return new WaitForSeconds(6f);
             if(burgerStack.Count > 0)
             {
                 float time = 0.5f;

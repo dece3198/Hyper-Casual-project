@@ -7,7 +7,7 @@ using UnityEngine.AI;
 
 public enum GuestState
 {
-    Idle, Walk, Order, Sit, Out
+    Idle, Walk, Order, Specify, Sit, Out
 }
 
 public abstract class BaseState<T>
@@ -56,8 +56,8 @@ public class GuestOrder : BaseState<GuestController>
         guest.animator.SetBool("Walk", false);
         guest.animator.SetBool("Hold", true);
         guest.canvas.gameObject.SetActive(true);
-        guest.burgerRand = Random.Range(1, 13);
-        guest.fizzCupRand = Random.Range(1, 13);
+        guest.burgerRand = Random.Range(1, 3);
+        guest.fizzCupRand = Random.Range(1, 3);
         guest.tray.SetActive(true);
     }
 
@@ -69,6 +69,29 @@ public class GuestOrder : BaseState<GuestController>
     {
         guest.burgerText.text = guest.burgerRand.ToString();
         guest.fizzCupText.text = guest.fizzCupRand.ToString();
+        if(guest.burgerRand <= 0 && guest.fizzCupRand <= 0)
+        {
+            guest.ChangeState(GuestState.Specify);
+        }
+    }
+}
+
+
+public class GuestSpecify : BaseState<GuestController>
+{
+    public override void Enter(GuestController guest)
+    {
+        guest.animator.SetBool("Walk", true);
+        WaitingManager.instance.waitingCount--;
+        ChairManager.instance.Specify(guest);
+    }
+
+    public override void Exit(GuestController guest)
+    {
+    }
+
+    public override void Update(GuestController guest)
+    {
     }
 }
 
@@ -130,6 +153,7 @@ public class GuestController : MonoBehaviour
         stateMachine.AddState(GuestState.Idle, new GuestIdle());
         stateMachine.AddState(GuestState.Walk, new GuestWalk());
         stateMachine.AddState(GuestState.Order, new GuestOrder());
+        stateMachine.AddState(GuestState.Specify, new GuestSpecify());
         stateMachine.AddState(GuestState.Sit, new GuestSit());
         stateMachine.AddState(GuestState.Out, new GuestOut());
     }
