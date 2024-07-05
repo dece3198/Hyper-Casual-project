@@ -5,15 +5,23 @@ using UnityEngine;
 
 public class CounterManager : MonoBehaviour
 {
+    public static CounterManager instance;
     [SerializeField] private Waiting waiting;
     [SerializeField] private Transform[] foodPos;
     [SerializeField] private Transform[] foodPos2;
+    public Transform staffPos;
     private Stack<GameObject> burgerStack = new Stack<GameObject>();
     private Stack<GameObject> fizzCupStack = new Stack<GameObject>();
     private int burgerCount = 0;
     private int fizzCupCount = 0;
     private bool isFizzCup = true;
     private bool isBurger = true;
+    public bool isStaff = true;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     private void OnTriggerStay(Collider other)
     {
@@ -36,6 +44,39 @@ public class CounterManager : MonoBehaviour
                     StartCoroutine(CounterCo(other.GetComponent<PlayerController>().fizzCupStack.Pop(), foodPos2[fizzCupCount], fizzCupStack));
                     fizzCupCount++;
                     other.GetComponent<PlayerController>().fizzCount--;
+                }
+            }
+        }
+
+        if(other.GetComponent<StaffController>() != null)
+        {
+            if (other.GetComponent<StaffController>().foodStack.Count > 0)
+            {
+                if (other.GetComponent<StaffController>().foodPos[0].GetChild(0).transform.CompareTag("Burger"))
+                {
+                    if (burgerCount < foodPos.Length)
+                    {
+                        StartCoroutine(CounterCo(other.GetComponent<StaffController>().foodStack.Pop(), foodPos[burgerCount], burgerStack));
+                        burgerCount++;
+                        other.GetComponent<StaffController>().foodCount--;
+                    }
+                }
+                else if (other.GetComponent<StaffController>().foodPos[0].GetChild(0).transform.CompareTag("FizzCup"))
+                {
+                    if (fizzCupCount < foodPos2.Length)
+                    {
+                        StartCoroutine(CounterCo(other.GetComponent<StaffController>().foodStack.Pop(), foodPos2[fizzCupCount], fizzCupStack));
+                        fizzCupCount++;
+                        other.GetComponent<StaffController>().foodCount--;
+                    }
+                }
+            }
+            else
+            {
+                if(isStaff)
+                {
+                    other.GetComponent<StaffController>().ChangeState(StaffState.Idle);
+                    isStaff = false;
                 }
             }
         }

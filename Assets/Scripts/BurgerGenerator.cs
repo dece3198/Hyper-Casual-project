@@ -2,17 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Rendering.PostProcessing.SubpixelMorphologicalAntialiasing;
 
 public class BurgerGenerator : MonoBehaviour
 {
     public static BurgerGenerator instance;
     [SerializeField] private GameObject foodPrefab;
-    [SerializeField] private List<Transform> foodPos = new List<Transform>();
-    [SerializeField] private List<Transform> upFoodPos = new List<Transform>();
+    [SerializeField] private Transform[] foodPos;
     private Queue<GameObject> foodQueue = new Queue<GameObject>();
     private Stack<GameObject> foodStack = new Stack<GameObject>();
     private bool isBurgerCool = true;
+    public bool isStaffCool = true;
     private int posCount = 0;
     public float speed = 0;
 
@@ -39,7 +38,6 @@ public class BurgerGenerator : MonoBehaviour
         {
             if (foodStack.Count > 0)
             {
-                other.GetComponent<PlayerController>().animator.SetBool("Hold", true);
                 if (other.GetComponent<PlayerController>().fizzCupStack.Count > 0)
                 {
                     if (other.GetComponent<PlayerController>().burgerStack.Count < other.GetComponent<PlayerController>().FoodPos2.Count)
@@ -71,6 +69,27 @@ public class BurgerGenerator : MonoBehaviour
                         }
                     }
                 }
+            }
+        }
+
+
+        if (other.GetComponent<StaffController>() != null)
+        {
+            if (other.GetComponent<StaffController>().foodStack.Count < other.GetComponent<StaffController>().foodPos.Count)
+            {
+                if(foodStack.Count > 0)
+                {
+                    if (isStaffCool)
+                    {
+                        StartCoroutine(BurgerStaffExtiPool(other.GetComponent<StaffController>(), other.GetComponent<StaffController>().foodPos[other.GetComponent<StaffController>().foodCount]));
+                        isStaffCool = false;
+                    }
+                }
+            }
+            else
+            {
+                CounterManager.instance.isStaff = true;
+                other.GetComponent<StaffController>().agent.SetDestination(CounterManager.instance.staffPos.position);
             }
         }
     }
@@ -112,6 +131,27 @@ public class BurgerGenerator : MonoBehaviour
         food.GetComponent<Rigidbody>().isKinematic = true;
         isBurgerCool = true;
     }
+
+    private IEnumerator BurgerStaffExtiPool(StaffController staff, Transform foodPos)
+    {
+        float time = 1f;
+        posCount--;
+        GameObject food = foodStack.Pop();
+        food.GetComponent<Rigidbody>().AddForce(Vector3.up * 3, ForceMode.Impulse);
+        while(time > 0)
+        {
+            time -= Time.deltaTime;
+            food.transform.position = Vector3.Lerp(food.transform.position, foodPos.position, 0.01f);
+            yield return null;
+        }
+        staff.foodStack.Push(food);
+        food.transform.parent = foodPos;
+        food.transform.position = foodPos.position;
+        staff.foodCount++;
+        food.GetComponent<Rigidbody>().isKinematic = true;
+        isStaffCool = true;
+    }
+
     public void EnterPool(GameObject _burger)
     {
         foodQueue.Enqueue(_burger);
@@ -131,25 +171,16 @@ public class BurgerGenerator : MonoBehaviour
 
     private IEnumerator BurgerCo()
     {
-        if(foodStack.Count < foodPos.Count)
+        if(foodStack.Count < foodPos.Length)
         {
             while (true)
             {
                 yield return new WaitForSeconds(speed);
-                if(posCount < foodPos.Count)
+                if(posCount < foodPos.Length)
                 {
                     Generator();
                 }
             }
         }
-    }
-
-    public void QuantityUp(int Count)
-    {
-        for(int i = 0; i < Count; i++)
-        {
-            foodPos.Add(upFoodPos[i]);
-            upFoodPos.Remove(upFoodPos[i]);
-        }
-    }    
+    } 
 }

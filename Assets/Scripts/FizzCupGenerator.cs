@@ -6,8 +6,7 @@ public class FizzCupGenerator : MonoBehaviour
 {
     public static FizzCupGenerator instance;
     [SerializeField] private GameObject foodPrefab;
-    [SerializeField] private List<Transform> foodPos = new List<Transform>();
-    [SerializeField] private List<Transform> upFoodPos = new List<Transform>();
+    [SerializeField] private Transform[] foodPos;
     private Queue<GameObject> foodQueue = new Queue<GameObject>();
     private Stack<GameObject> foodStack = new Stack<GameObject>();
     private bool isFizzCupCool = true;
@@ -42,7 +41,6 @@ public class FizzCupGenerator : MonoBehaviour
         {
             if (foodStack.Count > 0)
             {
-                other.GetComponent<PlayerController>().animator.SetBool("Hold", true);
                 if (other.GetComponent<PlayerController>().burgerStack.Count > 0)
                 {
                     if (other.GetComponent<PlayerController>().fizzCupStack.Count < other.GetComponent<PlayerController>().FoodPos3.Count)
@@ -135,12 +133,12 @@ public class FizzCupGenerator : MonoBehaviour
 
     private IEnumerator BurgerCo()
     {
-        if (foodStack.Count < foodPos.Count)
+        if (foodStack.Count < foodPos.Length)
         {
             while (true)
             {
                 yield return new WaitForSeconds(speed);
-                if (posCount < foodPos.Count)
+                if (posCount < foodPos.Length)
                 {
                     Generator();
                 }
@@ -148,12 +146,4 @@ public class FizzCupGenerator : MonoBehaviour
         }
     }
 
-    public void QuantityUp(int Count)
-    {
-        for (int i = 0; i < Count; i++)
-        {
-            foodPos.Add(upFoodPos[i]);
-            upFoodPos.Remove(upFoodPos[i]);
-        }
-    }
 }
