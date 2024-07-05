@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class GuestGenerator : MonoBehaviour
 {
+    public static GuestGenerator instance;
     [SerializeField] private List<GameObject> guests;
     [SerializeField] private GameObject destination;
     private Queue<GameObject> guestQueue = new Queue<GameObject>();
 
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     private void Start()
     {
@@ -30,6 +36,13 @@ public class GuestGenerator : MonoBehaviour
         guest.SetActive(true);
         guest.GetComponent<GuestController>().agent.SetDestination(destination.transform.position);
         guest.GetComponent<GuestController>().ChangeState(GuestState.Walk);
+    }
+
+    public void EnterPool(GameObject guest)
+    {
+        guestQueue.Enqueue(guest);
+        guest.transform.position = transform.position;
+        guest.SetActive(false);
     }
 
     private void Refill(int count)

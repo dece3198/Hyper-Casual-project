@@ -1,18 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public static GameManager instance;
+    public bool isFizzCupMachine = false;
+    public int level = 1;
+    [SerializeField] private TextMeshProUGUI levelText;
+
+    private void Awake()
     {
-        
+        instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        levelText.text = level.ToString();
     }
 }

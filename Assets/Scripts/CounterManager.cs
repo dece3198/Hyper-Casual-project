@@ -21,9 +21,9 @@ public class CounterManager : MonoBehaviour
         {
             if(other.GetComponent<PlayerController>().burgerStack.Count > 0)
             {
-                if(burgerCount < foodPos.Length)
+                if (burgerCount < foodPos.Length)
                 {
-                    StartCoroutine(CounterCo(other.GetComponent<PlayerController>().burgerStack.Pop(), foodPos[burgerCount],burgerStack));
+                    StartCoroutine(CounterCo(other.GetComponent<PlayerController>().burgerStack.Pop(), foodPos[burgerCount], burgerStack));
                     burgerCount++;
                     other.GetComponent<PlayerController>().burgerCount--;
                 }
@@ -31,7 +31,7 @@ public class CounterManager : MonoBehaviour
 
             if(other.GetComponent<PlayerController>().fizzCupStack.Count > 0)
             {
-                if(fizzCupCount < foodPos2.Length)
+                if (fizzCupCount < foodPos2.Length)
                 {
                     StartCoroutine(CounterCo(other.GetComponent<PlayerController>().fizzCupStack.Pop(), foodPos2[fizzCupCount], fizzCupStack));
                     fizzCupCount++;
@@ -52,7 +52,8 @@ public class CounterManager : MonoBehaviour
                     if(fizzCupStack.Count > 0)
                     StartCoroutine(fizzCupExit(waiting));
                 }
-                else if(isBurger)
+
+                if(isBurger)
                 {
                     if (burgerStack.Count > 0)
                         StartCoroutine(BurgerExit(waiting));
@@ -96,7 +97,7 @@ public class CounterManager : MonoBehaviour
         isBurger = false;
         while (waiting.guest.burgerRand > 0)
         {
-            yield return new WaitForSeconds(6f);
+            yield return new WaitForSeconds(3f);
             if(burgerStack.Count > 0)
             {
                 float time = 0.5f;

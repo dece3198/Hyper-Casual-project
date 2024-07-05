@@ -57,7 +57,11 @@ public class GuestOrder : BaseState<GuestController>
         guest.animator.SetBool("Hold", true);
         guest.canvas.gameObject.SetActive(true);
         guest.burgerRand = Random.Range(1, 3);
-        guest.fizzCupRand = Random.Range(1, 3);
+        if(GameManager.instance.isFizzCupMachine)
+        {
+            guest.fizzCupImage.SetActive(true);
+            guest.fizzCupRand = Random.Range(1, 3);
+        }
         guest.tray.SetActive(true);
     }
 
@@ -83,7 +87,15 @@ public class GuestSpecify : BaseState<GuestController>
     {
         guest.animator.SetBool("Walk", true);
         WaitingManager.instance.waitingCount--;
-        ChairManager.instance.Specify(guest);
+        guest.canvas.gameObject.SetActive(false);
+        if (ChairManager.instance.chairCount < ChairManager.instance.chair.Count)
+        {
+            ChairManager.instance.Specify(guest);
+        }
+        else
+        {
+            guest.ChangeState(GuestState.Out);
+        }
     }
 
     public override void Exit(GuestController guest)
@@ -99,6 +111,9 @@ public class GuestSit : BaseState<GuestController>
 {
     public override void Enter(GuestController guest)
     {
+        guest.animator.Play("Sit_A");
+        guest.animator.SetBool("Hold", false);
+        guest.tray.SetActive(false);
     }
 
     public override void Exit(GuestController guest)
@@ -114,6 +129,9 @@ public class GuestOut : BaseState<GuestController>
 {
     public override void Enter(GuestController guest)
     {
+        guest.animator.Play("Idle");
+        guest.animator.SetBool("Walk", true);
+        guest.agent.SetDestination(WaitingManager.instance.gameObject.transform.position);
     }
 
     public override void Exit(GuestController guest)
@@ -139,6 +157,7 @@ public class GuestController : MonoBehaviour
     public TextMeshProUGUI burgerText;
     public TextMeshProUGUI fizzCupText;
     public GameObject tray;
+    public GameObject fizzCupImage;
     public int burgerRand;
     public int fizzCupRand;
     public int burgerCount = 0;

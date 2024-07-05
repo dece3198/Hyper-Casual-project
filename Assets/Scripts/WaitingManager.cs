@@ -7,6 +7,7 @@ public class WaitingManager : MonoBehaviour
     public static WaitingManager instance;
     public Waiting[] waitingPos;
     public int waitingCount = 0;
+    [SerializeField] Transform exitPos;
 
     private void Awake()
     {
@@ -34,15 +35,22 @@ public class WaitingManager : MonoBehaviour
     {
         if(other.GetComponent<GuestController>() != null)
         {
-            for (int i = 0; i < waitingPos.Length; i++)
+            if(other.GetComponent<GuestController>().guestState != GuestState.Out)
             {
-                if (waitingPos[i].guest == null)
+                for (int i = 0; i < waitingPos.Length; i++)
                 {
-                    waitingCount++;
-                    waitingPos[i].guest = other.GetComponent<GuestController>();
-                    other.GetComponent<GuestController>().agent.SetDestination(waitingPos[i].transform.position);
-                    return;
+                    if (waitingPos[i].guest == null)
+                    {
+                        waitingCount++;
+                        waitingPos[i].guest = other.GetComponent<GuestController>();
+                        other.GetComponent<GuestController>().agent.SetDestination(waitingPos[i].transform.position);
+                        return;
+                    }
                 }
+            }
+            else
+            {
+                other.GetComponent<GuestController>().agent.SetDestination(exitPos.position);
             }
         }
     }

@@ -5,8 +5,9 @@ using UnityEngine;
 public class ChairManager : MonoBehaviour
 {
     public static ChairManager instance;
-    [SerializeField] private Chair[] chair;
-    private List<Chair> chairs = new List<Chair>();
+    public List<Chair> chair = new List<Chair>();
+    private List<Chair> randChairs = new List<Chair>();
+    public int chairCount = 0;
 
     private void Awake()
     {
@@ -16,17 +17,18 @@ public class ChairManager : MonoBehaviour
     public void Specify(GuestController guest)
     {
 
-        for(int i = 0; i < chair.Length; i++)
+        for(int i = 0; i < chair.Count; i++)
         {
             if (chair[i].guest == null)
             {
-                chairs.Add(chair[i]);
+                randChairs.Add(chair[i]);
             }
         }
 
-        int rand = Random.Range(0, chairs.Count);
-        chairs[rand].guest = guest;
-        guest.agent.SetDestination(chairs[rand].transform.position);
-        chairs.Clear();
+        int rand = Random.Range(0, randChairs.Count);
+        randChairs[rand].guest = guest;
+        guest.agent.SetDestination(randChairs[rand].transform.position);
+        chairCount++;
+        randChairs.Clear();
     }
 }

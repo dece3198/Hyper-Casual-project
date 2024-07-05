@@ -7,6 +7,9 @@ TagManager:
   - Burger
   - FizzCup
   - Order
+  - TableChair
+  - Office
+  - Kitchen
   layers:
   - Default
   - TransparentFX
@@ -16,8 +19,8 @@ TagManager:
   - UI
   - Player
   - Guest
-  - 
-  - 
+  - Kitchen
+  - Office
   - 
   - 
   - 
