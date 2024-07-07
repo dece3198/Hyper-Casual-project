@@ -51,6 +51,8 @@ public class Chair : MonoBehaviour
                 if(guest != null)
                 {
                     guest.ChangeState(GuestState.Out);
+                    guest = null;
+                    ChairManager.instance.chairCount--;
                 }
             }
         }
@@ -62,6 +64,7 @@ public class Chair : MonoBehaviour
         {
             yield return new WaitForSeconds(20);
             GameObject burger = burgerStack.Pop();
+            guest.burgerCount--;
             BurgerGenerator.instance.EnterPool(burger);
         }
     }
@@ -72,6 +75,7 @@ public class Chair : MonoBehaviour
         {
             yield return new WaitForSeconds(20);
             GameObject fizzCup = fizzCupStack.Pop();
+            guest.fizzCupCount--;
             FizzCupGenerator.instance.EnterPool(fizzCup);
         }
     }

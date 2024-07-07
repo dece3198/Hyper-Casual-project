@@ -7,22 +7,22 @@ public class CounterManager : MonoBehaviour
 {
     public static CounterManager instance;
     [SerializeField] private Waiting waiting;
-    [SerializeField] private Transform[] foodPos;
+    public Transform[] foodPos;
     [SerializeField] private Transform[] foodPos2;
     public Transform staffPos;
-    private Stack<GameObject> burgerStack = new Stack<GameObject>();
+    public Stack<GameObject> burgerStack = new Stack<GameObject>();
     private Stack<GameObject> fizzCupStack = new Stack<GameObject>();
     private int burgerCount = 0;
     private int fizzCupCount = 0;
     private bool isFizzCup = true;
     private bool isBurger = true;
-    public bool isStaff = true;
 
     private void Awake()
     {
         instance = this;
+        Time.timeScale = 2;
     }
-
+     
     private void OnTriggerStay(Collider other)
     {
         if(other.GetComponent<PlayerController>() != null)
@@ -73,10 +73,14 @@ public class CounterManager : MonoBehaviour
             }
             else
             {
-                if(isStaff)
+                if(other.GetComponent<StaffController>().staffState == StaffState.Walk)
                 {
-                    other.GetComponent<StaffController>().ChangeState(StaffState.Idle);
-                    isStaff = false;
+                    if(other.GetComponent<StaffController>().isWalk)
+                    {
+                        other.GetComponent<StaffController>().stamina -= 20;
+                        other.GetComponent<StaffController>().ChangeState(StaffState.Idle);
+                        other.GetComponent<StaffController>().isWalk = false;
+                    }
                 }
             }
         }
@@ -90,14 +94,26 @@ public class CounterManager : MonoBehaviour
             {
                 if (isFizzCup)
                 {
-                    if(fizzCupStack.Count > 0)
-                    StartCoroutine(fizzCupExit(waiting));
+                    if (ChairManager.instance.chairCount < ChairManager.instance.chair.Count)
+                    {
+                        if(Counter.instance.counter != null)
+                        {
+                            if (fizzCupStack.Count > 0)
+                                StartCoroutine(fizzCupExit(waiting));
+                        }
+                    }
                 }
 
                 if(isBurger)
                 {
-                    if (burgerStack.Count > 0)
-                        StartCoroutine(BurgerExit(waiting));
+                    if(ChairManager.instance.chairCount < ChairManager.instance.chair.Count)
+                    {
+                        if (Counter.instance.counter != null)
+                        {
+                            if (burgerStack.Count > 0)
+                                StartCoroutine(BurgerExit(waiting));
+                        }
+                    }
                 }
             }
         }
@@ -128,6 +144,17 @@ public class CounterManager : MonoBehaviour
                 fizzcup.transform.position = _waiting.guest.fizzCupPos[_waiting.guest.fizzCupCount].position;
                 _waiting.guest.fizzCupCount++;
                 _waiting.guest.fizzCupRand--;
+                if (MoneyManager.instance.moneyStack.Count < 2)
+                {
+                    MoneyManager.instance.Refill(5);
+                }
+                GameObject money = MoneyManager.instance.moneyStack.Pop();
+                MoneyManager.instance.exitMoney.Enqueue(money);
+                money.transform.position = MoneyManager.instance.moneyPos[MoneyManager.instance.moneyCount].position;
+                money.SetActive(true);
+                money.GetComponent<Money>().money = 2500;
+                MoneyManager.instance.moneyCount++;
+                GameManager.instance.Experience += 10;
             }
         }
         isFizzCup = true;
@@ -158,6 +185,17 @@ public class CounterManager : MonoBehaviour
                 burger.transform.position = _waiting.guest.burgerPos[_waiting.guest.burgerCount].position;
                 _waiting.guest.burgerCount++;
                 _waiting.guest.burgerRand--;
+                if (MoneyManager.instance.moneyStack.Count < 2)
+                {
+                    MoneyManager.instance.Refill(5);
+                }
+                GameObject money = MoneyManager.instance.moneyStack.Pop();
+                MoneyManager.instance.exitMoney.Enqueue(money);
+                money.transform.position = MoneyManager.instance.moneyPos[MoneyManager.instance.moneyCount].position;
+                money.SetActive(true);
+                money.GetComponent<Money>().money = 5000;
+                MoneyManager.instance.moneyCount++;
+                GameManager.instance.Experience += 20;
             }
         }
         isBurger = true;

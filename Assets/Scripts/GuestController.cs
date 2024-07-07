@@ -51,16 +51,22 @@ public class GuestWalk : BaseState<GuestController>
 
 public class GuestOrder : BaseState<GuestController>
 {
+    int maxRand;
     public override void Enter(GuestController guest)
     {
         guest.animator.SetBool("Walk", false);
         guest.animator.SetBool("Hold", true);
         guest.canvas.gameObject.SetActive(true);
-        guest.burgerRand = Random.Range(1, 3);
+        maxRand = 3 + (GameManager.instance.Level / 5);
+        if(maxRand > 12)
+        {
+            maxRand = 12;
+        }
+        guest.burgerRand = Random.Range(1, maxRand);
         if(GameManager.instance.isFizzCupMachine)
         {
             guest.fizzCupImage.SetActive(true);
-            guest.fizzCupRand = Random.Range(1, 3);
+            guest.fizzCupRand = Random.Range(1, maxRand);
         }
         guest.tray.SetActive(true);
     }
@@ -88,14 +94,7 @@ public class GuestSpecify : BaseState<GuestController>
         guest.animator.SetBool("Walk", true);
         WaitingManager.instance.waitingCount--;
         guest.canvas.gameObject.SetActive(false);
-        if (ChairManager.instance.chairCount < ChairManager.instance.chair.Count)
-        {
-            ChairManager.instance.Specify(guest);
-        }
-        else
-        {
-            guest.ChangeState(GuestState.Out);
-        }
+        ChairManager.instance.Specify(guest);
     }
 
     public override void Exit(GuestController guest)

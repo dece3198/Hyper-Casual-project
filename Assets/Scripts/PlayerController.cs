@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     public List<Transform> foodList = new List<Transform>();
     public List<Transform> foodList2 = new List<Transform>();
     public List<Transform> foodList3 = new List<Transform>();
+    public Transform moneyPos;
 
     private void Awake()
     {

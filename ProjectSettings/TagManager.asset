@@ -10,6 +10,7 @@ TagManager:
   - TableChair
   - Office
   - Kitchen
+  - Advertisement
   layers:
   - Default
   - TransparentFX

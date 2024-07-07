@@ -13,6 +13,7 @@ public class UpGradeManager : MonoBehaviour
     [SerializeField] private int speed;
     [SerializeField] private TextMeshProUGUI priceText;
     [SerializeField] private Chair[] chairs;
+    [SerializeField] private GameObject nextUpObj;
     float time = 3f;
 
 
@@ -52,10 +53,8 @@ public class UpGradeManager : MonoBehaviour
                     case "FizzCup": FizzCupMachine(); break;
                     case "TableChair": TableChair(); break;
                 }
-
             }
         }
-
     }
 
     private void OnTriggerExit(Collider other)
@@ -71,12 +70,16 @@ public class UpGradeManager : MonoBehaviour
 
     private void TableChair()
     {
-        for(int i = 0; i < chairs.Length; i++)
+        for (int i = 0; i < chairs.Length; i++)
         {
             ChairManager.instance.chair.Add(chairs[i]);
         }
         upGradeObj.SetActive(true);
         gameObject.SetActive(false);
+        if (nextUpObj != null)
+        {
+            nextUpObj.SetActive(true);
+        }
     }
 
 }

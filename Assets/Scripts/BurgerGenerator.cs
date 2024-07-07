@@ -88,7 +88,7 @@ public class BurgerGenerator : MonoBehaviour
             }
             else
             {
-                CounterManager.instance.isStaff = true;
+                other.GetComponent<StaffController>().isWalk = true;
                 other.GetComponent<StaffController>().agent.SetDestination(CounterManager.instance.staffPos.position);
             }
         }
@@ -156,6 +156,7 @@ public class BurgerGenerator : MonoBehaviour
     {
         foodQueue.Enqueue(_burger);
         _burger.transform.parent = transform;
+        _burger.GetComponent<Rigidbody>().isKinematic = true;
         _burger.SetActive(false);
     }
 
