@@ -75,6 +75,7 @@ public class BurgerGenerator : MonoBehaviour
 
         if (other.GetComponent<StaffController>() != null)
         {
+            other.GetComponent<StaffController>().animator.SetBool("Run", false);
             if (other.GetComponent<StaffController>().foodStack.Count < other.GetComponent<StaffController>().foodPos.Count)
             {
                 if(foodStack.Count > 0)
@@ -88,6 +89,7 @@ public class BurgerGenerator : MonoBehaviour
             }
             else
             {
+                other.GetComponent<StaffController>().animator.SetBool("Run", true);
                 other.GetComponent<StaffController>().isWalk = true;
                 other.GetComponent<StaffController>().agent.SetDestination(CounterManager.instance.staffPos.position);
             }

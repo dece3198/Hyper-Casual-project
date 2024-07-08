@@ -7,6 +7,7 @@ public class Counter : MonoBehaviour
     public static Counter instance;
     public GameObject counter;
     public GameObject counterPos;
+    [SerializeField] private GameObject zonObj;
 
     private void Awake()
     {
@@ -18,6 +19,7 @@ public class Counter : MonoBehaviour
         if(other.GetComponent<GroundChecker>() != null)
         {
             counter = other.GetComponent<GroundChecker>().gameObject;
+            zonObj.SetActive(false);
         }
 
         if(other.GetComponent<StaffController>() != null)
@@ -37,6 +39,7 @@ public class Counter : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         counter = null;
+        zonObj.SetActive(true);
     }
 
     private IEnumerator CounterCo(Collider other)

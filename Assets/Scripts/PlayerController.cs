@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController instance;
     public Animator animator;
     public List<Transform> FoodPos = new List<Transform>();
     public List<Transform> FoodPos2 = new List<Transform>();
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        instance = this;
     }
 
     private void Update()
@@ -42,18 +44,15 @@ public class PlayerController : MonoBehaviour
         {
             tray.SetActive(false);
         }
-
-        if(Input.GetKeyDown(KeyCode.L))
-        {
-            UpGrade();
-        }
     }
 
-    public void UpGrade()
+    public void VolumeUp()
     {
         FoodPos.Add(foodList[0]);
-        foodList.Remove(foodList[0]);
+        foodList.RemoveAt(0);
         FoodPos.Add(foodList2[0]);
-        foodList2.Remove(foodList2[0]);
+        foodList2.RemoveAt(0);
+        FoodPos3.Add(foodList3[0]);
+        foodList3.RemoveAt(0);
     }
 }

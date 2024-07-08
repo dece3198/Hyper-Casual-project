@@ -17,28 +17,33 @@ public class GameManager : MonoBehaviour
         { 
             level = value;
             switch (level)
-            {
-                case 5: LevelUp(upObj[0], virtualCamera.gameObject, 3); break;
+            { 
+                case 3: LevelUp(upObj[0], virtualCamera.gameObject, 3); break;
+                case 5: LevelUp(upObj[1], virtualCamera.gameObject, 3); break;
+                case 10: LevelUp(upObj[2], virtualCamera.gameObject, 3); break;
             }
-
         }
     }
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private Slider slider;
     [SerializeField] private float experience;
     [SerializeField] private GameObject[] upObj;
+    [SerializeField] private Transform[] camPos;
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
+    private int posCount = 0;
+
     public float Experience
     {
         get { return experience; }
         set 
         { 
             experience = value; 
-            if(experience == maxExperience)
+            if(experience >= maxExperience)
             {
+                float remain = experience -= maxExperience;
                 Level++;
-                experience = 0;
-                maxExperience += 50 * Level;
+                experience = remain;
+                maxExperience += 10 * Level;
             }
         }
     }
@@ -57,15 +62,17 @@ public class GameManager : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.K))
         {
-            Experience += 50;
+            Experience += 20;
         }
     }
 
     private void LevelUp(GameObject objA,GameObject objB, float count)
     {
         objA.SetActive(true);
+        objB.transform.position = camPos[posCount].position;
         objB.SetActive(true);
         StartCoroutine(ObjCo(objB, count));
+        posCount++;
     }
 
     private IEnumerator ObjCo(GameObject gameObject, float count)

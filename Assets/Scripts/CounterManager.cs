@@ -20,7 +20,6 @@ public class CounterManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        Time.timeScale = 2;
     }
      
     private void OnTriggerStay(Collider other)
@@ -50,6 +49,7 @@ public class CounterManager : MonoBehaviour
 
         if(other.GetComponent<StaffController>() != null)
         {
+            other.GetComponent<StaffController>().animator.SetBool("Run", false);
             if (other.GetComponent<StaffController>().foodStack.Count > 0)
             {
                 if (other.GetComponent<StaffController>().foodPos[0].GetChild(0).transform.CompareTag("Burger"))

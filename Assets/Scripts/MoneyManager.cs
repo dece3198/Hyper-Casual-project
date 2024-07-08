@@ -41,7 +41,7 @@ public class MoneyManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        Money = 100000000;
+        Money = 30000;
     }
 
     private void Start()

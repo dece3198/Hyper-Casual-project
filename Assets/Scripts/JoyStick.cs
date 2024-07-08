@@ -5,14 +5,20 @@ using UnityEngine.EventSystems;
 
 public class JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
+    public static JoyStick instance;
     [SerializeField] private RectTransform backGround;
     [SerializeField] private RectTransform joyStick;
     [SerializeField] private GameObject player;
-    [SerializeField] private float moveSpeed;
+    public float moveSpeed;
 
     private float radius;
     private bool isTouch = false;
     private Vector3 movePosition;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     private void Start()
     {
@@ -27,7 +33,6 @@ public class JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
             if(movePosition.magnitude > 0)
             {
                 player.GetComponent<PlayerController>().animator.SetBool("Run", true);
-                player.transform.rotation = Quaternion.Lerp(player.transform.rotation, Quaternion.LookRotation(movePosition), Time.deltaTime * 3);
             }
         }
         else
@@ -46,6 +51,7 @@ public class JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
         value = value.normalized;
         movePosition = new Vector3(value.x * moveSpeed * distance * Time.deltaTime,0f , value.y * moveSpeed * distance * Time.deltaTime);
+        player.transform.rotation = Quaternion.Lerp(player.transform.rotation, Quaternion.LookRotation(movePosition), Time.deltaTime * 3);
 
     }
 
